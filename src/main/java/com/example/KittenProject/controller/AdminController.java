@@ -23,6 +23,8 @@ public class AdminController {
     @Autowired
     private CategoryService categoryService;
 
+
+    //TODO : add bean validation to the add products
     @GetMapping("products/add")
     public String addProduct(Model model){
         model.addAttribute("product",new Products());
