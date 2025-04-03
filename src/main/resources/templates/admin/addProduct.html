@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{admin/fragments :: header}"></head>
+<body class="d-flex flex-column min-vh-100">
+<div class="wrapper">
+    <!-- Sidebar -->
+    <div th:replace="~{admin/fragments :: sidebar}" th:with="currentPage='add-product'"></div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Navbar -->
+        <div th:replace="~{admin/fragments :: navbar}"></div>
+
+        <!-- Add Product Content -->
+        <div class="container-fluid p-4">
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <h2>Add New Product</h2>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Home</a></li>
+                            <li class="breadcrumb-item"><a th:href="@{/admin/products}">Products</a></li>
+                            <li class="breadcrumb-item active">Add Product</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Add Product Form -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Product Information</h6>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/products/save}" th:object="${product}" method="post" enctype="multipart/form-data" id="addProductForm">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <!-- Basic Information -->
+                                <div class="mb-3">
+                                    <label for="productName" class="form-label">Product Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="productName" name="name" th:field="*{productName}" required>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="productCategory" class="form-label">Category <span class="text-danger">*</span></label>
+                                            <select class="form-select" id="productCategory" name="category" th:field="*{category}" required >
+                                                <option value="">Select Category</option>
+                                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}" ></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="productPrice" class="form-label">Price ($) <span class="text-danger">*</span></label>
+                                            <input type="number" step="0.01" class="form-control" id="productPrice" name="price" th:field="*{price}" required>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="productDescription" class="form-label">Description</label>
+                                    <textarea class="form-control" id="productDescription"  th:field="*{productDescription}" rows="5"></textarea>
+                                </div>
+
+
+
+                            </div>
+
+                            <div class="col-md-4">
+                                <!-- Product Status -->
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        Product Status
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="productStatus" class="form-label">Status</label>
+                                            <select class="form-select" id="productStatus" name="status" th:field="*{status}">
+                                                <option th:each="productStatus : ${status}" th:value="${productStatus}" th:text="${productStatus}">Active</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- Product Image -->
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        Product Image
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="text-center mb-3">
+                                            <img id="productImagePreview" src="/img/product-placeholder.jpg" class="img-fluid img-thumbnail"
+                                                 alt="Product Image" style="max-height: 200px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="productImage" class="form-label">Upload Image</label>
+                                            <input type="file" class="form-control" id="productImage"  name="productPhoto" accept="image/*">
+                                        </div>
+                                        <div class="text-muted small">
+                                            Recommended size: 800x800 pixels, max 2MB.
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-end mt-4">
+                            <a th:href="@{/admin/products}" class="btn btn-secondary me-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Add Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div th:replace="~{admin/fragments :: footer}"></div>
+
+<!-- Add Product page specific scripts -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Image preview
+        document.getElementById('productImage').addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('productImagePreview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Additional images preview
+        document.getElementById('additionalImages').addEventListener('change', function() {
+            const files = this.files;
+            const container = document.getElementById('additionalImagesContainer');
+            container.innerHTML = '';
+
+            if (files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const col = document.createElement('div');
+                        col.className = 'col-4';
+
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'img-fluid img-thumbnail';
+                        img.style.height = '80px';
+                        img.style.width = '100%';
+                        img.style.objectFit = 'cover';
+
+                        col.appendChild(img);
+                        container.appendChild(col);
+                    };
+                    reader.readAsDataURL(files[i]);
+                }
+            }
+        });
+
+        // Add specification functionality
+        document.getElementById('addSpecificationBtn').addEventListener('click', function() {
+            const container = document.getElementById('specificationsContainer');
+            const newRow = document.createElement('div');
+            newRow.className = 'specification-row row mb-2';
+            newRow.innerHTML = `
+                <div class="col-md-5">
+                    <input type="text" class="form-control" name="specificationKeys[]" placeholder="Key (e.g. Size, Color)">
+                </div>
+                <div class="col-md-5">
+                    <input type="text" class="form-control" name="specificationValues[]" placeholder="Value (e.g. Large, Red)">
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger remove-spec-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(newRow);
+
+            // Enable the first row's remove button if we now have more than one row
+            if (container.querySelectorAll('.specification-row').length > 1) {
+                container.querySelector('.remove-spec-btn').removeAttribute('disabled');
+            }
+
+            // Add event listener to the new remove button
+            newRow.querySelector('.remove-spec-btn').addEventListener('click', function() {
+                newRow.remove();
+
+                // If we now have only one row, disable its remove button
+                const rows = container.querySelectorAll('.specification-row');
+                if (rows.length === 1) {
+                    rows[0].querySelector('.remove-spec-btn').setAttribute('disabled', 'disabled');
+                }
+            });
+        });
+
+        // Save as draft functionality
+        document.getElementById('saveAsDraftBtn').addEventListener('click', function() {
+            document.getElementById('productStatus').value = 'draft';
+            document.getElementById('addProductForm').submit();
+        });
+
+        // Form validation (using Bootstrap's built-in validation)
+        const form = document.getElementById('addProductForm');
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        });
+
+        // Toggle sidebar
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.wrapper').classList.toggle('sidebar-collapsed');
+        });
+    });
+</script>
+</body>
+</html>
