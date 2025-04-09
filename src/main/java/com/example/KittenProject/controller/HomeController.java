@@ -29,20 +29,15 @@ public class HomeController {
 
     @PostMapping("/login")
     public String loginUser(@ModelAttribute("customer")Customers customers, HttpServletRequest request){
-        Customers customers1 = customerService.loginUser(customers);
-        if(customers1 !=null){
-            request.getSession().setAttribute("isLoggedIn",true);
-            request.getSession().setAttribute("email",customers1.getEmailAddress());
-            request.getSession().setAttribute("fullName",customers1.getFullName());
-            return "redirect:/";
-        }
+//        Customers customers1 = customerService.loginUser(customers);
+//        if(customers1 !=null){
+//            request.getSession().setAttribute("email",customers1.getEmailAddress());
+//            request.getSession().setAttribute("fullName",customers1.getFullName());
+//            return "redirect:/";
+//        }
         return "index";
     }
 
-//    @GetMapping("/logout")
-//    public String logout(HttpServletRequest request){
-//        request.c
-//    }
 
     @GetMapping("/register")
     public String createUserViewPage(Model model){

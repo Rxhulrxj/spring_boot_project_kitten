@@ -6,6 +6,7 @@ import com.example.KittenProject.model.Products;
 import com.example.KittenProject.services.CategoryService;
 import com.example.KittenProject.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.io.IOException;
 
 @Controller
 @RequestMapping("/admin")
+@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class AdminController {
 
     @Autowired

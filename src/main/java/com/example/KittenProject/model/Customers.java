@@ -24,8 +24,18 @@ public class Customers {
     @Email(message = "Please provide a proper Email Address")
     private String emailAddress;
 
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
     @NotNull(message = "Password is mandatory")
     private String password;
+
+    private String roles;
 
     public Long getCustomerId() {
         return customerId;
